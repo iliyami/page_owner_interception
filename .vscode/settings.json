@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "kernel.h": "c",
+        "kprobes.h": "c",
+        "init.h": "c",
+        "module.h": "c",
+        "mm_types.h": "c",
+        "proc_fs.h": "c",
+        "fs.h": "c"
+    },
+}
