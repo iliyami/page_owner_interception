@@ -6,6 +6,8 @@
 #include <linux/mm_types.h>
 #include <linux/kernel.h>
 #include <linux/module.h>
+#include <linux/fs.h>
+#include <linux/path.h>
 
 #define PROC_FILENAME "page_order"
 
@@ -55,6 +57,9 @@ static int set_page_owner_pre(struct kprobe *kp, struct pt_regs *regs)
     if (counter < 5)
     {
         struct page *page = (struct page *)regs->di; // first arg of the __set_page_owner is in the rdi(di) register in x86-64 arch
+        // struct vfsmount **proc_mnt;
+        // char *path;
+	    // struct file_system_type *proc_fs_type;
         struct file *file;
         char buf[128];
         int ret, order, participate;
@@ -62,6 +67,19 @@ static int set_page_owner_pre(struct kprobe *kp, struct pt_regs *regs)
         counter++;
 
         // Open the proc file for reading
+        // proc_fs_type = get_fs_type("proc");
+        // if (!proc_fs_type) {
+		// 	pr_err("Failed to find procfs to set sysctl from command line\n");
+		// 	return 0;
+		// }
+        // *proc_mnt = kern_mount(proc_fs_type);
+        // put_filesystem(proc_fs_type);
+		// if (IS_ERR(*proc_mnt)) {
+		// 	pr_err("Failed to mount procfs to set sysctl from command line\n");
+		// 	return 0;
+		// }
+        // path = kasprintf(GFP_KERNEL, PROC_FILENAME);
+        // file = file_open_root_mnt(*proc_mnt, path, O_RDONLY, 0);
         file = filp_open(PROC_FILENAME, O_RDONLY, 0);
         if (IS_ERR(file))
         {
