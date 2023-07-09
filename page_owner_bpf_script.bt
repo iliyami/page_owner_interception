@@ -1,0 +1,85 @@
+#include <linux/sched.h>
+#include <linux/ktime.h>
+//#include <bpf_helpers.h>
+
+// This kprobe is triggered when the page owner information for a page
+// of memory is set to a new value (i.e., a new process is assigned as
+// the owner of the page).
+kprobe:__set_page_owner
+{
+    //struct task_struct *task;
+    //u64 timestamp = ktime_get_ns();
+    //@start = nsecs / 1000000000;
+
+    //bpf_probe_read(&task, sizeof(task), (void *)PT_REGS_PARM1(ctx));
+
+    //bpf_printk("page_owner finish: timestamp=%llu pid=%d comm=%s\n", timestamp, task->pid, task->comm);
+    printf("page_owner info {set}: timestamp=%llu pid=%d proc_name=%s\n", nsecs, pid, comm);
+    // Need at least v0.12.0 printf("page_owner info: timestamp=%f pid=%d\n", strftime("%H:%M:%S", nsecs), pid);
+
+    //return 0;
+}
+
+// This kprobe is triggered when the page owner information for a
+// page of memory is dumped (i.e., printed to the kernel log).
+kprobe:__dump_page_owner
+{
+    //struct task_struct *task;
+    //u64 timestamp = ktime_get_ns();
+    @start = nsecs;
+
+    //bpf_probe_read(&task, sizeof(task), (void *)PT_REGS_PARM1(ctx));
+
+    //bpf_printk("page_owner finish: timestamp=%llu pid=%d comm=%s\n", timestamp, task->pid, task->comm);
+    printf("page_owner info {dump}: timestamp=%llu pid=%d proc_name=%s\n", nsecs, pid, comm);
+
+    //return 0;
+}
+
+// This kprobe is triggered when the kernel initializes the page owner
+// data structures for a process.
+kprobe:init_page_owner
+{
+    printf("page_owner info {init}: timestamp=%llu pid=%d proc_name=%s\n", nsecs, pid, comm);
+}
+
+// This kprobe is triggered when a process reads the page owner information
+// for a page of memory.
+kprobe:read_page_owner
+{
+    printf("page_owner info {read}: timestamp=%llu pid=%d proc_name=%s\n", nsecs, pid, comm);
+}
+
+// This kprobe is triggered when the kernel determines that a page of memory
+// needs a page owner assigned to it. The page owner is assigned based on 
+// the process that last accessed the page.
+kprobe:need_page_owner
+{
+    printf("page_owner info {need}: timestamp=%llu pid=%d proc_name=%s\n", nsecs, pid, comm);
+}
+
+// This kprobe is triggered when the page owner information for a page
+// of memory is reset (cleared).
+kprobe:__reset_page_owner
+{
+    printf("page_owner info {reset}: timestamp=%llu pid=%d proc_name=%s\n", nsecs, pid, comm);
+}
+
+// This kprobe is triggered when the page owner information for a page
+// of memory is copied from one page to another.
+kprobe:__copy_page_owner
+{
+    printf("page_owner info {copy}: timestamp=%llu pid=%d proc_name=%s\n", nsecs, pid, comm);
+}
+
+// This kprobe is triggered when a page owner is split across multiple processes.
+kprobe:__split_page_owner
+{
+    printf("page_owner info {split}: timestamp=%llu pid=%d proc_name=%s\n", nsecs, pid, comm);
+}
+
+// This kprobe is triggered when a page owner is migrated from one process to another.
+kprobe:__set_page_owner_migrate_reason
+{
+    printf("page_owner info {set migrate}: timestamp=%llu pid=%d\n", nsecs, pid);
+}
