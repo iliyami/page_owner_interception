@@ -29,3 +29,15 @@ pageOrder_proc_module/page_order.mod
 pageOrder_proc_module/page_order.ko
 page_owner_module.mod.o
 page_owner_module.mod.c
+filter_kernel_module/.filter_page_owner_module.ko.cmd
+filter_kernel_module/.filter_page_owner_module.o
+filter_kernel_module/.filter_page_owner_module.o.d
+filter_kernel_module/.filter_page_owner_module.o.cmd
+filter_kernel_module/.filter_page_owner_module.mod.cmd
+filter_kernel_module/.filter_page_owner_module.mod.o.cmd
+filter_kernel_module/filter_page_owner_module.ko
+filter_kernel_module/filter_page_owner_module.o
+filter_kernel_module/filter_page_owner_module.mod
+.gitignore
+filter_kernel_module/filter_page_owner_module.mod.c
+filter_kernel_module/filter_page_owner_module.mod.o
