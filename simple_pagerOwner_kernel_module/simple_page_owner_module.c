@@ -1,7 +1,5 @@
 #include <linux/kprobes.h>
 
-#define PROC_FILENAME "page_order"
-
 
 // The function pointer to store the original set_page_owner function
 static void (*set_page_owner_orig)(struct page *);
@@ -12,7 +10,7 @@ static int set_page_owner_pre(struct kprobe *kp, struct pt_regs *regs)
     static int counter = 0;
     if (counter < 5) {
         struct page *page = (struct page *)regs->di; // first arg of the __set_page_owner is in the rdi register in x86-64 arch
-        pr_err("__set_page_owner called with page pointer: %p\n", page);
+        pr_err("__set_page_owner called with page pointer: %p with flag: %lu\n", page, page->flags);
         counter++;
     } else {
         unregister_kprobe(kp);
