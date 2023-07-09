@@ -59,14 +59,15 @@ static int set_page_owner_pre(struct kprobe *kp, struct pt_regs *regs)
         char buf[128];
         int ret, order, participate;
 
+        counter++;
+
         // Open the proc file for reading
         file = filp_open(PROC_FILENAME, O_RDONLY, 0);
         if (IS_ERR(file))
         {
-            pr_err("Failed to open %s\n", PROC_FILENAME);
+            pr_err("Failed to open %s proc file\n", PROC_FILENAME);
             return 0;
         }
-
 
         // Read data from the proc file
         ret = kernel_read(file, buf, sizeof(buf) - 1, &file->f_pos);
@@ -83,7 +84,6 @@ static int set_page_owner_pre(struct kprobe *kp, struct pt_regs *regs)
 
         // Simple playground of this module to check if its working fine
         pr_err("__set_page_owner called with page pointer: %p\n", page);
-        counter++;
     }
     else
     {
