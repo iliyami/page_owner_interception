@@ -17,10 +17,8 @@ struct page_order {
 };
 
 static struct page_order page_orders[] = {
-    {0, 20},
-    {1, 50},
-    {2, 80},
-    {3, 100},
+    {0, 100},
+    {1, 20},
 };
 
 static int page_order_show(struct seq_file *m, void *v)
@@ -48,33 +46,6 @@ static const struct proc_ops page_order_ops = {
 
 // The function pointer to store the original set_page_owner function
 static void (*set_page_owner_orig)(struct page *);
-
-// Function to get the process (PID) associated with a page
-pid_t get_pid_from_page(struct page *page) {
-    struct address_space *mapping = page->mapping;
-    struct inode *inode;
-    struct task_struct *task;
-
-    if (mapping == NULL) {
-        // Page is not associated with any specific address space
-        return -1;  // Or any other appropriate error value
-    }
-
-    // Retrieve the process (PID) from the address_space structure
-    inode = mapping->host;
-
-    // Traverse the list of processes to find the one with matching inode
-    rcu_read_lock();
-    for_each_process(task) {
-        if (task->pid != 0 && task->fs && task->fs->root && task->fs->root->d_inode == inode) {
-            rcu_read_unlock();
-            return task->pid;
-        }
-    }
-    rcu_read_unlock();
-
-    return -1;  // Process not found for the given page
-}
 
 // The kprobe pre-handler function
 static int set_page_owner_pre(struct kprobe *kp, struct pt_regs *regs)
